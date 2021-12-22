@@ -15,6 +15,7 @@ func Init() *echo.Echo {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
+	// routes ini mengembalikan package controllers yg berisi FetchAllPegawai() yang akan mereturn JSON
 	e.GET("/pegawai", controllers.FetchAllPegawai)
 
 	return e
