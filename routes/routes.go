@@ -22,6 +22,9 @@ func Init() *echo.Echo {
 	// post: mengambil data dari resource luar menuju database kita
 	e.POST("/pegawai", controllers.StorePegawai)
 
+	// routes update
+	e.PUT("/pegawai", controllers.UpdatePegawai)
+
 
 	return e
 }

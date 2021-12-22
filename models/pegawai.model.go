@@ -81,6 +81,7 @@ func StorePegawai(nama string, alamat string, telepon string) (Response, error) 
 
 	// menampung return value dari stmt
 	// nanti ini akan mengsisi VALUES (?, ?, ?)
+	// urutan disini samakan dengan sqlStatement
 	result, err := stmt.Exec(nama, alamat, telepon)
 	if err != nil {
 		return res, err
@@ -99,4 +100,40 @@ func StorePegawai(nama string, alamat string, telepon string) (Response, error) 
 	}
 
 	return res, nil
+}
+
+func UpdatePegawai(id int, nama string, alamat string, telepon string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE pegawai SET nama = ?, alamat = ?, telepon = ? WHERE id = ?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	// urutan disini samakan dengan di sqlStatements
+	result, err := stmt.Exec(nama, alamat, telepon, id)
+	if err != nil {
+		return res, err
+	}
+
+	// kalau di store kita butuh lastinsertid, kalau disini kita butuh row affected
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	// setup response
+	res.Status = http.StatusOK
+	res.Message = "Success"
+	res.Data = map[string]int64{
+		"rows_affected" : rowsAffected,
+	}
+
+	return res, nil
+
+
 }
