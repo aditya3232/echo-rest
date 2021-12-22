@@ -25,6 +25,9 @@ func Init() *echo.Echo {
 	// routes update
 	e.PUT("/pegawai", controllers.UpdatePegawai)
 
+	// route delete
+	e.DELETE("pegawai", controllers.DeletePegawai)
+
 
 	return e
 }
