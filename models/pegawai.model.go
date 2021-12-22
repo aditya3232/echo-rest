@@ -28,7 +28,7 @@ func FetchAllPegawai() (Response, error) {
 
 	// variabel rows digunakan untuk menampung banyak data pegawai yang ada di sqlStatement
 	rows, err := con.Query(sqlStatement)
-	defer rows.Close()
+	// defer rows.Close() // digunakan untuk mengakhirkan eksekusi sebuah statement tepat sebelum blok fungsi selesai
 
 	// jika ada error di Query(sqlStatement) maka return response, dan errornya
 	// error akan diatur di controller
@@ -56,5 +56,47 @@ func FetchAllPegawai() (Response, error) {
 	res.Data = arrobj
 
 	// di pegawai.model.go setiap return harus ada res & nil karena memang diatas kita define 2 value (Response, error)
+	return res, nil
+}
+
+// fungsi store/post/insert
+// disini ada beberapa parameter inputnya, sesuaikan dengan database kita. id tidak perlu, karena auto increment
+// kemudian akan mereturn struct response & error
+func StorePegawai(nama string, alamat string, telepon string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+	
+	// di sqlstatement ini ada variabel ? yg akan menyimpan value 
+	sqlStatement := "INSERT pegawai (nama, alamat, telepon) VALUES (?, ?, ?)"
+
+	// menampung eror statement
+	// Prepare() akan mempersiapkan sql statement kita agar bisa dapat dieksekusi, dan akhirnya objek dapat digunakan berkali2
+	stmt, err := con.Prepare(sqlStatement)
+
+	// cek ada eror, jika ada eror return aja
+	if err != nil {
+		return res, err
+	}
+
+	// menampung return value dari stmt
+	// nanti ini akan mengsisi VALUES (?, ?, ?)
+	result, err := stmt.Exec(nama, alamat, telepon)
+	if err != nil {
+		return res, err
+	}
+
+	// variabel ini akan terisi dengan Last id didalam database
+	lastInsertedId, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Success"
+	res.Data = map[string]int64{
+		"last_inserted_id" : lastInsertedId,
+	}
+
 	return res, nil
 }

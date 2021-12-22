@@ -17,6 +17,11 @@ func Init() *echo.Echo {
 
 	// routes ini mengembalikan package controllers yg berisi FetchAllPegawai() yang akan mereturn JSON
 	e.GET("/pegawai", controllers.FetchAllPegawai)
+	
+	// routes post
+	// post: mengambil data dari resource luar menuju database kita
+	e.POST("/pegawai", controllers.StorePegawai)
+
 
 	return e
 }
